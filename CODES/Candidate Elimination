@@ -1,0 +1,36 @@
+import pandas as pd
+import numpy as np
+
+data = pd.read_csv("candidate.csv")
+
+concepts = np.array(data.iloc[:, :-1])
+target = np.array(data.iloc[:, -1])
+
+S = concepts[0].copy()
+
+G = [["?" for i in range(len(S))]
+     for i in range(len(S))]
+
+for i in range(len(concepts)):
+
+    if target[i] == "Yes":
+
+        for j in range(len(S)):
+            if concepts[i][j] != S[j]:
+                S[j] = "?"
+                G[j][j] = "?"
+
+    else:
+
+        for j in range(len(S)):
+            if concepts[i][j] != S[j]:
+                G[j][j] = S[j]
+            else:
+                G[j][j] = "?"
+
+print("Specific Hypothesis (S):")
+print(S)
+
+print("\nGeneral Hypothesis (G):")
+for row in G:
+    print(row)
