@@ -1,0 +1,33 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error
+
+data = {
+    'Year': [2018, 2017, 2016, 2019, 2020, 2015, 2021, 2018, 2017, 2022],
+    'Kilometers_Driven': [30000, 45000, 60000, 20000, 15000, 70000, 10000, 35000, 50000, 5000],
+    'Price': [600000, 500000, 400000, 750000, 850000, 350000, 950000, 620000, 480000, 1100000]
+}
+
+df = pd.DataFrame(data)
+
+X = df[['Year', 'Kilometers_Driven']]
+y = df['Price']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42)
+
+model = LinearRegression()
+
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+print("R2 Score:", r2_score(y_test, y_pred))
+print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+
+sample = [[2020, 25000]]
+
+prediction = model.predict(sample)
+
+print("Predicted Car Price:", prediction[0])
