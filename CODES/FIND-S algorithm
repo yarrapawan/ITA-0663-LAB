@@ -1,0 +1,23 @@
+import pandas as pd
+dataset = [
+    ['Sunny','Warm','Normal','Strong','Warm','Same','Yes'],
+    ['Sunny','Warm','High','Strong','Warm','Same','Yes'],
+    ['Rainy','Cold','High','Strong','Warm','Change','No'],
+    ['Sunny','Warm','High','Strong','Cool','Change','Yes'] 
+]
+
+data = pd.DataFrame(dataset)
+concepts = data.iloc[:,:-1].values
+target = data.iloc[:,-1].values
+
+def find_s(concepts,target):
+    hypothesis = concepts[0].copy()
+    for i in range(len(concepts)):
+        if target[i] == "Yes":
+            for j in range(len(hypothesis)):
+                if concepts[i][j] != hypothesis[j]:
+                    hypothesis[j] = "?"
+    return hypothesis
+specific_hypothesis = find_s(concepts,target)
+print(data)
+print("\nMost Specific Hypothesis: ", specific_hypothesis)
