@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WaterStat - B.Tech CSE Project Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --secondary: #0284c7;
+      --secondary-light: #e0f2fe;
+      --dark: #0f172a;
+      --text: #334155;
+      --muted: #64748b;
+      --bg: #0b1120;
+      --slide-bg: #ffffff;
+      --border: #e2e8f0;
+      --card-bg: #f8fafc;
+      --potable: #0d9488;
+      --nonpotable: #dc2626;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    .toolbar {
+      width: 100%;
+      max-width: 1120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 16px;
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .toolbar-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-nav:hover { background: var(--primary-dark); }
+    .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .slide-counter {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #94a3b8;
+      min-width: 85px;
+      text-align: center;
+    }
+
+    .stage {
+      width: 100%;
+      max-width: 1120px;
+      aspect-ratio: 16 / 9;
+      background: var(--slide-bg);
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      height: 100%;
+      padding: 34px 42px;
+      flex-direction: column;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .slide.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-header {
+      margin-bottom: 18px;
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 8px;
+    }
+
+    .slide-category {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .slide-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -0.02em;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; flex: 1; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; flex: 1; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; flex: 1; }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .card-title.blue { color: var(--secondary); }
+
+    .card p, .card li {
+      font-size: 0.83rem;
+      line-height: 1.48;
+      color: var(--text);
+    }
+
+    ul.clean-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    ul.clean-list li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 7px;
+      font-size: 0.85rem;
+    }
+
+    ul.clean-list li::before {
+      content: "✔";
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 0.8rem;
+    }
+
+    table.slide-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      flex: 1;
+    }
+
+    table.slide-table th {
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    table.slide-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+    }
+
+    table.slide-table tr:nth-child(even) td { background: #f8fafc; }
+
+    .title-slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px;
+      background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+      border-radius: 10px;
+      border: 1px solid #ccfbf1;
+    }
+
+    .badge-sub {
+      background: var(--primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .main-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--dark);
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .sub-title {
+      font-size: 0.95rem;
+      color: var(--text);
+      max-width: 820px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .meta-pills {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--secondary);
+    }
+
+    .notes-drawer {
+      width: 100%;
+      max-width: 1120px;
+      background: #1e293b;
+      border-radius: 8px;
+      margin-top: 10px;
+      padding: 10px 16px;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      border-left: 4px solid var(--secondary);
+    }
+
+    .notes-drawer strong { color: #f1f5f9; }
+
+    .img-preview-container {
+      display: flex;
+      gap: 16px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .img-preview-box {
+      flex: 3;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .img-preview-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .img-callout-card {
+      flex: 1;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="toolbar-title">
+      <span>💧</span> WaterStat Project Presentation Deck (18 Slides)
+    </div>
+    <div class="toolbar-controls">
+      <button class="btn-nav" id="prevBtn" onclick="prevSlide()">◀ Previous</button>
+      <span class="slide-counter" id="slideCounter">Slide 1 / 18</span>
+      <button class="btn-nav" id="nextBtn" onclick="nextSlide()">Next ▶</button>
+      <button class="btn-nav" style="background:#0284c7;" onclick="toggleNotes()">Speaker Script</button>
+    </div>
+  </div>
+
+  <!-- Stage -->
+  <div class="stage">
+
+    <!-- Slide 1 -->
+    <div class="slide active" id="slide-1">
+      <div class="title-slide-content">
+        <span class="badge-sub">B.Tech Computer Science & Engineering | Major Project</span>
+        <h1 class="main-title">WaterStat: An Interactive Statistical Framework for Water Quality Assessment and Potability Analysis</h1>
+        <p class="sub-title">A Pure Software-Based Interactive Framework for Multi-Parameter Data Validation, Exploratory Visualization, Hypothesis Testing, Dimensionality Reduction, and Statistical Potability Modeling Using R and Shiny.</p>
+        <div class="meta-pills">
+          <div class="pill">📌 Technologies: R v4.6+ & Shiny</div>
+          <div class="pill">📌 Domain: Water Informatics & Statistical Computing</div>
+          <div class="pill">📌 Scope: Software-Only (No Hardware / IoT Required)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="slide" id="slide-2">
+      <div class="slide-header">
+        <div class="slide-category">Section 1</div>
+        <div class="slide-title">1. Introduction to Water Quality & Statistical Assessment</div>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-title">What is Water Quality?</div>
+          <p>• Defines chemical, physical, and biological properties of water relative to safety standards.</p><br>
+          <p>• <strong>Why Assessment Matters:</strong> Contaminated water carries waterborne pathogens causing cholera, dysentery, and organ toxicity.</p><br>
+          <p>• Safe drinking water (potability) requires strict adherence to permissible limits established by WHO.</p>
+        </div>
+        <div class="card">
+          <div class="card-title blue">The 9 Physicochemical Parameters</div>
+          <p>1. <strong>pH:</strong> Acid-base balance (safe: 6.5–8.5)<br>
+             2. <strong>Hardness:</strong> Ca & Mg mineral concentrations<br>
+             3. <strong>Solids (TDS):</strong> Total dissolved minerals<br>
+             4. <strong>Chloramines:</strong> Disinfection treatment levels<br>
+             5. <strong>Sulfate:</strong> Dissolved mineral salt<br>
+             6. <strong>Conductivity:</strong> Electrical ion conductance<br>
+             7. <strong>Organic Carbon:</strong> Decaying organic matter<br>
+             8. <strong>Trihalomethanes:</strong> Chemical byproduct<br>
+             9. <strong>Turbidity:</strong> Clarity & suspended cloudiness</p>
+        </div>
+        <div class="card">
+          <div class="card-title">Role of Statistics & WaterStat</div>
+          <p>• <strong>The Challenge:</strong> Evaluating 9 simultaneous parameters with varying scales, missing values, and outliers is difficult manually.</p><br>
+          <p>• <strong>Statistical Solution:</strong> Quantifies uncertainty, measures variance, tests group differences, and estimates odds ratios.</p><br>
+          <p>• <strong>WaterStat:</strong> End-to-end R Shiny software that makes water-quality analysis systematic, interactive, and reproducible.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="slide" id="slide-3">
+      <div class="slide-header">
+        <div class="slide-category">Section 2</div>
+        <div class="slide-title">2. Literature Review (Credible Research Studies)</div>
+      </div>
+      <table class="slide-table">
+        <thead>
+          <tr>
+            <th style="width:20%">Author / Year</th>
+            <th style="width:24%">Method</th>
+            <th style="width:34%">Main Finding</th>
+            <th style="width:22%">Limitation / Gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>WHO (2017 / 2022)</strong><br><small>World Health Organization</small></td>
+            <td>Guidelines for Drinking-Water Quality Standards</td>
+            <td>Established international benchmark thresholds (pH, chloramines, sulfate, turbidity) for human water potability.</td>
+            <td>Regulatory standards only; provides no automated computing platform for user data.</td>
+          </tr>
+          <tr>
+            <td><strong>Kazi et al. (2009)</strong><br><small>Chemosphere (Elsevier)</small></td>
+            <td>Multivariate Statistical Analysis (PCA, DA, CA)</td>
+            <td>Demonstrated that PCA effectively compresses multi-parameter dimensionality and isolates key pollution factors.</td>
+            <td>Executed as static scripts; lacked interactive web interface or predictive potability scoring.</td>
+          </tr>
+          <tr>
+            <td><strong>Uddin et al. (2021)</strong><br><small>Ecological Indicators</small></td>
+            <td>Water Quality Index (WQI) Formulations Review</td>
+            <td>Showed traditional WQI models suffer from 'eclipsing' and subjective weighting biases across parameters.</td>
+            <td>Identified the urgent need for data-driven, objective statistical modeling and uncertainty reporting.</td>
+          </tr>
+          <tr>
+            <td><strong>Mohammed et al. (2022)</strong><br><small>Water Research & AI</small></td>
+            <td>Machine Learning Classification (LR, RF, SVM)</td>
+            <td>Demonstrated machine learning models achieve strong classification accuracy for water potability prediction.</td>
+            <td>Focused on black-box accuracy; lacked integrated hypothesis testing, EDA visuals, and clinical diagnostics.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Slide 4 -->
+    <div class="slide" id="slide-4">
+      <div class="slide-header">
+        <div class="slide-category">Sections 3 & 4</div>
+        <div class="slide-title">3. Research Gap & 4. Problem Statement</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Identified Research Gaps</div>
+          <p>• <strong>Disjointed Toolchains:</strong> Preprocessing, statistical testing, and ML modeling typically require separate tools (Excel, SPSS, Python scripts).</p><br>
+          <p>• <strong>Black-Box Focus:</strong> Studies focus on prediction accuracy numbers without hypothesis verification or residual diagnostics.</p><br>
+          <p>• <strong>High Programming Barrier:</strong> Water environmentalists and municipal workers may lack advanced coding skills to build R/Python pipelines.</p><br>
+          <p>• <strong>Need for Integrated Platform:</strong> Lack of an interactive software system unifying data cleaning, statistical tests, PCA, and potability modeling.</p>
+        </div>
+        <div class="card" style="border-left: 4px solid var(--secondary);">
+          <div class="card-title blue">Problem Statement</div>
+          <p style="font-size: 0.95rem; font-style: italic; color: var(--dark); margin-bottom: 14px;">
+            "Water-quality datasets contain multiple parameters, missing values, outliers, and complex relationships.<br><br>
+            Performing preprocessing, statistical analysis, visualization, hypothesis testing, and potability assessment separately can make the analysis difficult, error-prone, and time-consuming.<br><br>
+            Therefore, an integrated interactive framework is required to simplify and organize the complete water-quality analysis process."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5 -->
+    <div class="slide" id="slide-5">
+      <div class="slide-header">
+        <div class="slide-category">Section 5</div>
+        <div class="slide-title">5. Proposed Solution: The WaterStat Framework</div>
+      </div>
+      <div style="background:var(--primary-light); border:1px solid #ccfbf1; padding:14px; border-radius:8px; margin-bottom:12px;">
+        <h3 style="color:var(--primary); font-size:1.1rem; margin-bottom:4px;">WaterStat — An R and R Shiny-Based Software Platform</h3>
+        <p style="font-size:0.85rem; color:var(--dark);">An interactive, upload-driven software framework facilitating end-to-end water quality data analysis without external hardware dependencies.</p>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-title blue">Complete Closed-Loop Analytical Pipeline</div>
+        <p style="font-weight:700; font-size:0.85rem; color:var(--dark);">Upload Dataset ➔ Validate ➔ Preprocess ➔ Analyze ➔ Visualize ➔ Perform Statistical Tests ➔ Train Model ➔ Evaluate ➔ Assess Potability</p>
+      </div>
+      <div class="card" style="background:#fef2f2; border-left:4px solid #ef4444;">
+        <strong style="color:#991b1b; font-size:0.85rem;">Important Project Scope Note (Software-Only):</strong>
+        <p style="color:#7f1d1d; font-size:0.8rem; margin-top:4px;">
+          WaterStat is strictly a software analytics platform. It does <strong>not</strong> employ Arduino, ESP32 microcontrollers, or physical IoT sensors. It is engineered to process authenticated laboratory physicochemical data with statistical rigor.
+        </p>
+      </div>
+    </div>
+
+    <!-- Slide 6 -->
+    <div class="slide" id="slide-6">
+      <div class="slide-header">
+        <div class="slide-category">Section 6 & 9</div>
+        <div class="slide-title">6. System Architecture & Component Mapping</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; flex:1; justify-content:center;">
+        <div class="card" style="padding:10px 14px; border-left:4px solid var(--dark); flex-direction:row; align-items:center; justify-content:space-between;">
+          <strong style="color:var(--dark); font-size:0.85rem;">1. USER INTERACTION</strong>
+          <span style="font-size:0.8rem; color:var(--text);">User uploads CSV / Excel water-quality dataset via modern web interface</span>
+        </div>
+        <div class="card" style="padding:10px 14px; border-left:4px solid var(--primary); flex-direction:row; align-items:center; justify-content:space-between;">
+          <strong style="color:var(--primary); font-size:0.85rem;">2. MODULE 1: PREPROCESSING</strong>
+          <span style="font-size:0.8rem; color:var(--text);">Range Validation ➔ Missing Value Profiling ➔ Tukey Outlier Audit ➔ Data Explorer</span>
+        </div>
+        <div class="card" style="padding:10px 14px; border-left:4px solid var(--secondary); flex-direction:row; align-items:center; justify-content:space-between;">
+          <strong style="color:var(--secondary); font-size:0.85rem;">3. MODULE 2: DESCRIPTIVE STATS</strong>
+          <span style="font-size:0.8rem; color:var(--text);">Histograms ➔ KDE Density ➔ Boxplots ➔ Violin Plots ➔ Correlation Heatmaps</span>
+        </div>
+        <div class="card" style="padding:10px 14px; border-left:4px solid var(--primary); flex-direction:row; align-items:center; justify-content:space-between;">
+          <strong style="color:var(--primary); font-size:0.85rem;">4. MODULE 3: INFERENTIAL MODELING</strong>
+          <span style="font-size:0.8rem; color:var(--text);">Welch t-tests ➔ ANOVA & Diagnostics ➔ MLR Regression ➔ PCA ➔ Logistic Regression</span>
+        </div>
+        <div class="card" style="padding:10px 14px; border-left:4px solid var(--secondary); flex-direction:row; align-items:center; justify-content:space-between;">
+          <strong style="color:var(--secondary); font-size:0.85rem;">5. MODULE 4: SHINY DASHBOARD</strong>
+          <span style="font-size:0.8rem; color:var(--text);">Interactive Plotly Charts ➔ Batch Dataset Scoring ➔ Custom Sample Evaluator</span>
+        </div>
+        <div class="card" style="padding:10px 14px; border-left:4px solid var(--dark); flex-direction:row; align-items:center; justify-content:space-between;">
+          <strong style="color:var(--dark); font-size:0.85rem;">6. DECISION OUTPUTS</strong>
+          <span style="font-size:0.8rem; color:var(--text);">Potability Probability ➔ Confusion Matrix ➔ ROC/AUC ➔ Downloadable Multi-section CSVs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 7: Module 1 Description -->
+    <div class="slide" id="slide-7">
+      <div class="slide-header">
+        <div class="slide-category">Detailed Module Breakdown</div>
+        <div class="slide-title">Module 1: Water Quality Data Acquisition & Preprocessing</div>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-title">Module 1 Capabilities & Workflow (in Simple English):</div>
+        <ul class="clean-list">
+          <li><strong>Accepts CSV & Excel Files:</strong> Users can upload their water quality data with a simple file browser or drag-and-drop.</li>
+          <li><strong>Automatic Name Normalization:</strong> Corrects column names automatically (e.g., changes 'ph' or 'PH' to 'pH', and 'solids' to 'Solids').</li>
+          <li><strong>Strict Boundary Validation:</strong> Verifies that pH values stay between 0.0 and 14.0 and checks that concentrations are not negative numbers.</li>
+          <li><strong>Removes Duplicate Rows:</strong> Automatically detects and removes repeated rows to prevent distorted data analysis.</li>
+          <li><strong>Audits Missing Values:</strong> Counts missing entries for all 9 parameters and displays them in tables and interactive bar charts.</li>
+          <li><strong>Flags Outliers (Tukey 1.5×IQR Rule):</strong> Identifies extreme values without deleting them, preserving authentic contamination records.</li>
+          <li><strong>Interactive Data Explorer:</strong> Provides a live table where users can view raw data, inspect cleaned data, and download cleaned CSV files.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 8: Module 1 Image Preview -->
+    <div class="slide" id="slide-8">
+      <div class="slide-header">
+        <div class="slide-category">Module 1 Visual Preview</div>
+        <div class="slide-title">Module 1: User Interface & Visual Preview</div>
+      </div>
+      <div class="img-preview-container">
+        <div class="img-preview-box">
+          <img src="www/previews/mod1_preview.png" alt="Module 1 Interface Preview">
+        </div>
+        <div class="img-callout-card" style="background:#f0fdfa; border-color:#ccfbf1;">
+          <div class="card-title" style="font-size:0.95rem;">Key UI Features:</div>
+          <p style="font-size:0.8rem; line-height:1.45; color:var(--dark);">
+            • <strong>Instant File Ingestion:</strong> Drag-and-drop CSV/Excel.<br><br>
+            • <strong>Validation Report:</strong> Status badge, rows, and class balance.<br><br>
+            • <strong>Missing Data Plots:</strong> Visual bar chart of missing cells.<br><br>
+            • <strong>Data Explorer:</strong> Filter columns, search, and paginate 3,276 records.<br><br>
+            • <strong>Download Cleaned Data:</strong> Export processed data with one click.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 9: Module 2 Description -->
+    <div class="slide" id="slide-9">
+      <div class="slide-header">
+        <div class="slide-category">Detailed Module Breakdown</div>
+        <div class="slide-title">Module 2: Exploratory & Descriptive Statistical Analysis</div>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-title blue">Module 2 Capabilities & Visualizations (in Simple English):</div>
+        <ul class="clean-list">
+          <li><strong>Calculates Core Statistics:</strong> Computes mean, median, standard deviation, variance, minimum, maximum, quartiles, and skewness for all 9 parameters.</li>
+          <li><strong>All Major Distribution Charts:</strong> Allows switching between Histograms (with normal curves), Kernel Density Estimation, Boxplots, and Violin Plots with quartiles.</li>
+          <li><strong>Bivariate Scatter Plots:</strong> Shows relationships between any two chosen parameters with a linear regression trendline and 95% confidence interval band.</li>
+          <li><strong>Multi-Parameter Comparison:</strong> Normalizes all parameters onto a Z-score scale so their levels can be compared side-by-side across potability classes.</li>
+          <li><strong>Mean Comparison Bar Charts:</strong> Displays faceted bar charts showing parameter means with standard error bars for potable vs. non-potable water.</li>
+          <li><strong>Correlation Matrix Heatmaps:</strong> Generates interactive color-coded heatmaps for both Pearson (linear) and Spearman (rank) correlations.</li>
+          <li><strong>Significance Testing Table:</strong> Displays full correlation tables reporting exact coefficients, p-values, sample size n, and verbal interpretations (alpha = 0.05).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 10: Module 2 Image Preview -->
+    <div class="slide" id="slide-10">
+      <div class="slide-header">
+        <div class="slide-category">Module 2 Visual Preview</div>
+        <div class="slide-title">Module 2: User Interface & Visual Preview</div>
+      </div>
+      <div class="img-preview-container">
+        <div class="img-preview-box">
+          <img src="www/previews/mod2_preview.png" alt="Module 2 Interface Preview">
+        </div>
+        <div class="img-callout-card" style="background:#e0f2fe; border-color:#bae6fd;">
+          <div class="card-title blue" style="font-size:0.95rem;">Key UI Features:</div>
+          <p style="font-size:0.8rem; line-height:1.45; color:var(--dark);">
+            • <strong>Chart Switcher:</strong> Histograms, Density, Boxplot, and Violin.<br><br>
+            • <strong>Live Value Boxes:</strong> Mean, Median, SD, Min, Max, and Skewness.<br><br>
+            • <strong>Interactive Tooltips:</strong> Hover over any bar or point for details.<br><br>
+            • <strong>Correlation Heatmap:</strong> Full 9×9 matrix with correlation numbers.<br><br>
+            • <strong>Z-Score Comparison:</strong> Standardized multi-parameter profiles.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 11: Module 3 Description -->
+    <div class="slide" id="slide-11">
+      <div class="slide-header">
+        <div class="slide-category">Detailed Module Breakdown</div>
+        <div class="slide-title">Module 3: Inferential Statistical Analysis & Modeling</div>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-title">Module 3 Capabilities & Modeling (in Simple English):</div>
+        <ul class="clean-list">
+          <li><strong>Welch Two-Sample t-tests:</strong> Tests if potable and non-potable water have significantly different means, reporting Cohen's d effect sizes.</li>
+          <li><strong>One-Way ANOVA & Diagnostics:</strong> Compares parameter means across groups, complete with Shapiro-Wilk normality and Levene's variance tests.</li>
+          <li><strong>Chi-Square Test of Independence:</strong> Groups continuous parameters into quantiles to test whether they are statistically dependent on potability.</li>
+          <li><strong>Multiple Linear Regression (MLR):</strong> Models multi-parameter relationships with R², adjusted R², F-test, VIF collinearity checks, and 3 residual plots.</li>
+          <li><strong>Principal Component Analysis (PCA):</strong> Compresses the 9 dimensions into orthogonal components with Scree plots, 2D Biplots, and contribution charts.</li>
+          <li><strong>Stratified Logistic Regression:</strong> Splits data into reproducible train and test sets, reporting Odds Ratios per +1 SD with 95% Wald confidence intervals.</li>
+          <li><strong>Model Evaluation Metrics:</strong> Displays Confusion Matrix heatmaps, ROC curves (with AUC), calibration curves, and sensitivity sweeps across decision thresholds (0.1–0.9).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 12: Module 3 Image Preview -->
+    <div class="slide" id="slide-12">
+      <div class="slide-header">
+        <div class="slide-category">Module 3 Visual Preview</div>
+        <div class="slide-title">Module 3: User Interface & Visual Preview</div>
+      </div>
+      <div class="img-preview-container">
+        <div class="img-preview-box">
+          <img src="www/previews/mod3_preview.png" alt="Module 3 Interface Preview">
+        </div>
+        <div class="img-callout-card" style="background:#f0fdfa; border-color:#ccfbf1;">
+          <div class="card-title" style="font-size:0.95rem;">Key UI Features:</div>
+          <p style="font-size:0.8rem; line-height:1.45; color:var(--dark);">
+            • <strong>One-Click Training:</strong> Set seed and split fraction slider.<br><br>
+            • <strong>Confusion Matrix Heatmap:</strong> TP, TN, FP, and FN counts with percentages.<br><br>
+            • <strong>ROC & Calibration Plots:</strong> Validates predictive discrimination.<br><br>
+            • <strong>Odds Ratio Forest Plot:</strong> Displays feature impact per +1 SD.<br><br>
+            • <strong>ANOVA Q-Q Plot:</strong> Inspects residual normality assumptions.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 13: Module 4 Description -->
+    <div class="slide" id="slide-13">
+      <div class="slide-header">
+        <div class="slide-category">Detailed Module Breakdown</div>
+        <div class="slide-title">Module 4: Interactive Dashboard & Potability Assessment</div>
+      </div>
+      <div class="card" style="flex:1;">
+        <div class="card-title blue">Module 4 Capabilities & Assessment (in Simple English):</div>
+        <ul class="clean-list">
+          <li><strong>Unified Decision-Support Dashboard:</strong> Ties all preprocessing, exploratory charts, and modeling together into a fast, reactive R Shiny application.</li>
+          <li><strong>Batch Dataset Assessment:</strong> Deploys the trained model to predict potability probabilities across all rows in an uploaded dataset, showing predicted probability distributions.</li>
+          <li><strong>Custom Single-Sample Assessment:</strong> Allows users to input measured laboratory values for all 9 parameters to receive instant potability classifications.</li>
+          <li><strong>Realistic Quick Presets:</strong> Provides one-click buttons like 'Preset Potable' and 'Preset Non-Potable' for live testing and demonstration.</li>
+          <li><strong>Real-Time Probability Meter & Badges:</strong> Displays the estimated potability probability percentage and a clear Potable (Safe) / Non-potable (Unsafe) status badge.</li>
+          <li><strong>Out-of-Bounds Extrapolation Warnings:</strong> Alerts the user if an entered parameter falls outside the range observed during training, cautioning about extrapolation.</li>
+          <li><strong>Consolidated Export Center:</strong> Enables downloading comprehensive multi-section CSV reports for statistical tests, batch predictions, and model specifications.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slide 14: Module 4 Image Preview -->
+    <div class="slide" id="slide-14">
+      <div class="slide-header">
+        <div class="slide-category">Module 4 Visual Preview</div>
+        <div class="slide-title">Module 4: User Interface & Visual Preview</div>
+      </div>
+      <div class="img-preview-container">
+        <div class="img-preview-box">
+          <img src="www/previews/mod4_preview.png" alt="Module 4 Interface Preview">
+        </div>
+        <div class="img-callout-card" style="background:#e0f2fe; border-color:#bae6fd;">
+          <div class="card-title blue" style="font-size:0.95rem;">Key UI Features:</div>
+          <p style="font-size:0.8rem; line-height:1.45; color:var(--dark);">
+            • <strong>Sample Evaluator:</strong> Enter 9 values or click realistic presets.<br><br>
+            • <strong>Probability Percentage:</strong> Real-time potability score gauge.<br><br>
+            • <strong>Classification Badge:</strong> Instant POTABLE vs. NON-POTABLE tag.<br><br>
+            • <strong>Log-Odds Table:</strong> Parameter contribution breakdown.<br><br>
+            • <strong>Export Hub:</strong> Download all analysis results as CSV.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 15: Statistical Techniques -->
+    <div class="slide" id="slide-15">
+      <div class="slide-header">
+        <div class="slide-category">Section 8</div>
+        <div class="slide-title">8. Statistical Techniques & Modeling Rigor</div>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-title" style="font-size:0.95rem;">Descriptive Stats</div>
+          <p style="font-size:0.8rem; line-height:1.45;">• Mean & Median<br>• Variance & SD<br>• Quartiles & IQR<br>• Skewness<br>• Potability group summary statistics</p>
+        </div>
+        <div class="card">
+          <div class="card-title blue" style="font-size:0.95rem;">Hypothesis Tests</div>
+          <p style="font-size:0.8rem; line-height:1.45;">• Welch Two-sample t-test<br>• Cohen's d effect sizes<br>• One-Way ANOVA<br>• Shapiro-Wilk & Levene tests<br>• Chi-Square & Cramer's V</p>
+        </div>
+        <div class="card">
+          <div class="card-title" style="font-size:0.95rem;">Modeling</div>
+          <p style="font-size:0.8rem; line-height:1.45;">• Multiple Linear Regression<br>• Max VIF collinearity check<br>• PCA Dimensionality Reduction<br>• Scree & Biplots<br>• Binomial Logistic Regression</p>
+        </div>
+        <div class="card">
+          <div class="card-title blue" style="font-size:0.95rem;">Model Evaluation</div>
+          <p style="font-size:0.8rem; line-height:1.45;">• Confusion Matrix Heatmap<br>• Accuracy, Precision, Recall<br>• Specificity & F1-Score<br>• ROC Curve & AUC<br>• Probability Calibration & Brier</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 16: Expected Outcomes -->
+    <div class="slide" id="slide-16">
+      <div class="slide-header">
+        <div class="slide-category">Section 10</div>
+        <div class="slide-title">10. Expected Outcomes (Target Deliverables)</div>
+      </div>
+      <div class="grid-2" style="grid-template-rows: repeat(4, 1fr); gap: 10px;">
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--primary); font-size:0.85rem;">✔ Clean & Validated Water Data:</strong>
+          <span style="font-size:0.78rem;">Automated auditing of duplicates, negative concentrations, pH bounds (>14), and missing cells.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--secondary); font-size:0.85rem;">✔ Descriptive Statistical Insights:</strong>
+          <span style="font-size:0.78rem;">Baseline metrics across all 9 parameters with comparative potability grouping.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--primary); font-size:0.85rem;">✔ Parameter Relationship Discovery:</strong>
+          <span style="font-size:0.78rem;">Pearson & Spearman correlation heatmaps and MLR assessing inter-variable relationships.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--secondary); font-size:0.85rem;">✔ Statistical Significance Analysis:</strong>
+          <span style="font-size:0.78rem;">Welch t-tests, ANOVA, and Chi-square reporting statistics, df, p-values, and effect sizes.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--primary); font-size:0.85rem;">✔ Interactive Visualizations:</strong>
+          <span style="font-size:0.78rem;">Plotly-enabled distributions, density curves, violin plots, and PCA biplots.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--secondary); font-size:0.85rem;">✔ Logistic Regression Potability Assessment:</strong>
+          <span style="font-size:0.78rem;">Standardized odds ratios per +1 SD with 95% Wald intervals and interactive threshold tuning.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--primary); font-size:0.85rem;">✔ Custom Sample Laboratory Assessment:</strong>
+          <span style="font-size:0.78rem;">Immediate probability estimation, classification badge, and extrapolation range checks.</span>
+        </div>
+        <div class="card" style="padding:10px 14px;">
+          <strong style="color:var(--secondary); font-size:0.85rem;">✔ Downloadable Comprehensive Artifacts:</strong>
+          <span style="font-size:0.78rem;">Exportable CSVs for statistical results, batch predictions, model specs, and evaluation metrics.</span>
+        </div>
+      </div>
+      <p style="font-size:0.75rem; color:var(--muted); text-align:center; margin-top:8px; font-style:italic;">
+        Note: In accordance with academic honesty, numerical metrics are computed dynamically on user datasets without preset fabricated numbers.
+      </p>
+    </div>
+
+    <!-- Slide 17: Conclusion -->
+    <div class="slide" id="slide-17">
+      <div class="slide-header">
+        <div class="slide-category">Section 11</div>
+        <div class="slide-title">11. Conclusion & Key Project Contributions</div>
+      </div>
+      <div style="background:var(--primary-light); border:1px solid #ccfbf1; padding:16px; border-radius:8px; margin-bottom:14px;">
+        <h4 style="color:var(--primary); font-size:1.05rem; margin-bottom:6px;">Summary Conclusion:</h4>
+        <p style="font-size:0.92rem; font-style:italic; color:var(--dark); line-height:1.5;">
+          "WaterStat integrates data preprocessing, statistical analysis, visualization, hypothesis testing, and modeling into a single interactive R Shiny platform.<br>
+          The proposed system aims to make water-quality assessment more systematic, accessible, and interpretable while supporting data-driven potability analysis."
+        </p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">★ Integrated Unified Architecture</div>
+          <p>Eliminates tool fragmentation by merging data validation, exploratory charts, inferential tests, and predictive modeling into one seamless web application.</p>
+        </div>
+        <div class="card">
+          <div class="card-title blue">★ Methodological Rigor & No Data Leakage</div>
+          <p>Maintains three independent preprocessing paths: unimputed for EDA, pairwise complete cases for hypothesis tests, and training-only standardization for ML.</p>
+        </div>
+        <div class="card">
+          <div class="card-title">★ Interpretability Over Black-Box Models</div>
+          <p>Empowers stakeholders with odds ratios per +1 SD, Wald confidence intervals, VIF collinearity checks, and calibration curves rather than opaque predictions.</p>
+        </div>
+        <div class="card">
+          <div class="card-title blue">★ Accessible Decision Support</div>
+          <p>Enables environmental analysts, water quality engineers, and municipal officers to execute complex statistics without writing custom code.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 18: Future Scope -->
+    <div class="slide" id="slide-18">
+      <div class="slide-header">
+        <div class="slide-category">Section 12</div>
+        <div class="slide-title">12. Future Scope & Acknowledgements</div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Future Enhancements</div>
+          <p style="font-size:0.82rem; line-height:1.5;">
+            • <strong>Multi-Source Datasets:</strong> Expanding benchmark evaluations across diverse geographic and municipal water basins.<br><br>
+            • <strong>Advanced Machine Learning:</strong> Integrating Random Forest and XGBoost with SHAP value explanations alongside logistic regression.<br><br>
+            • <strong>Non-Linear Statistics:</strong> Implementing Generalized Additive Models (GAMs) to capture non-linear parameter interactions.<br><br>
+            • <strong>Automated PDF Reports:</strong> Adding R Markdown / Quarto to generate official laboratory reports with one click.<br><br>
+            • <strong>Geospatial GIS Mapping:</strong> Integrating Leaflet to display geographic water potability maps and spatial contamination clusters.<br><br>
+            • <strong>Real-Time Laboratory Feeds:</strong> Providing telemetry API hooks for automated data streaming from certified testing facilities.
+          </p>
+        </div>
+        <div class="card" style="background:var(--primary-light); border-color:#ccfbf1; text-align:center; justify-content:center; align-items:center;">
+          <h2 style="font-family:'Outfit'; font-size:2.2rem; color:var(--primary); margin-bottom:8px;">Thank You!</h2>
+          <h4 style="font-size:1.15rem; color:var(--secondary); margin-bottom:14px;">Questions & Viva Discussion</h4>
+          <p style="font-size:0.85rem; color:var(--dark); max-width:340px; margin-bottom:12px;">
+            <strong>WaterStat: An Interactive Statistical Framework for Water Quality Assessment and Potability Analysis Using R and Shiny</strong>
+          </p>
+          <span style="font-size:0.75rem; color:var(--muted);">B.Tech Computer Science & Engineering</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Speaker Notes Drawer -->
+  <div class="notes-drawer" id="notesDrawer">
+    <strong>Speaker Script & Viva Talking Points (Slide <span id="notesSlideNum">1</span>):</strong>
+    <p id="notesContent">Loading script...</p>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 18;
+
+    const speakerNotes = [
+      "Good morning evaluators. Today I present WaterStat: An Interactive Statistical Framework for Water Quality Assessment and Potability Analysis Using R and Shiny. This is a pure software-only computational platform designed to provide rigorous statistical analysis and predictive potability assessment on validated laboratory water data.",
+      "In this slide, we introduce water quality. Safe drinking water is essential, yet waterborne contamination remains a critical global issue. We examine 9 standard physicochemical parameters: pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic Carbon, Trihalomethanes, and Turbidity. Analyzing 9 parameters simultaneously is challenging because of differing measurement scales, missing data, and complex correlations. WaterStat combines statistical methods with interactive visuals to solve this.",
+      "Our literature review covers 4 credible pillars: WHO guidelines establishing baseline thresholds; Kazi et al. demonstrating PCA for water parameter dimensionality reduction; Uddin et al. identifying the subjectivity and eclipsing flaws of traditional WQI models; and Mohammed et al. showcasing ML classification. The clear research gap is that statistics and machine learning are currently fragmented across disconnected tools.",
+      "Here we articulate the research gap and problem statement. In current workflows, researchers must use Excel for cleaning, SPSS or R for hypothesis testing, Tableau for plotting, and Python for ML. WaterStat addresses this by delivering a unified, interactive platform that handles preprocessing, statistics, visualization, hypothesis testing, and potability assessment in one seamless system.",
+      "WaterStat is introduced as our proposed solution. It is built in R and R Shiny. It executes a closed-loop pipeline: Upload Dataset -> Validate -> Preprocess -> Analyze -> Visualize -> Perform Statistical Tests -> Train Model -> Evaluate -> Assess Potability. Notice that WaterStat is strictly software-based; we do not use low-cost Arduino or ESP32 sensors because they lack sensitivity for parameters like THMs and chloramines.",
+      "This architecture diagram illustrates the flow from raw data ingestion to decision support. Module 1 validates physical boundaries; Module 2 generates exploratory plots; Module 3 executes inferential tests and models; Module 4 ties everything together into an interactive R Shiny dashboard producing potability classifications and downloadable reports.",
+      "Module 1 is our Data Acquisition and Preprocessing engine. In simple terms: it accepts CSV/Excel files; automatically fixes header spelling; validates that pH is 0 to 14 and concentrations are positive; deletes duplicate rows; counts missing cells; flags outliers using Tukey's 1.5x IQR rule without deleting them; and provides an interactive data explorer.",
+      "This slide shows the live interface of Module 1. You can see the file upload input, the validation summary table showing 3,276 validated rows, the potability class distribution, and the interactive data explorer table with search and pagination.",
+      "Module 2 is our Exploratory and Descriptive Analysis module. It computes mean, median, variance, standard deviation, quartiles, and skewness. It provides all major chart types: histograms with normal curves, smooth kernel density plots, boxplots with jitter points, violin plots with quartiles, bivariate scatter plots with regression trendlines, and correlation heatmaps.",
+      "Here is the visual preview of Module 2. Notice the top summary value boxes showing mean, median, and skewness for the selected parameter; the interactive distribution plot; the violin plot comparison; and the full 9x9 Pearson correlation matrix heatmap.",
+      "Module 3 handles Inferential Statistics and Modeling. It runs Welch two-sample t-tests; One-Way ANOVA with Shapiro-Wilk and Levene diagnostics; Chi-Square tests of independence; Multiple Linear Regression with VIF collinearity checks; Principal Component Analysis (PCA); and fits a stratified Logistic Regression model with live decision threshold tuning.",
+      "Here is the visual preview of Module 3. It displays the logistic regression training controls, the live Confusion Matrix heatmap, the ROC Curve with test AUC, the Odds Ratio forest plot with 95% Wald confidence intervals, and the Welch t-test results table.",
+      "Module 4 is the interactive Dashboard and Decision Support engine. It provides batch potability assessment for entire datasets, a custom single-sample laboratory calculator with realistic presets, live potability probability percentages, out-of-range extrapolation alerts, and a consolidated export center for downloadable CSV reports.",
+      "Here is the live interface of Module 4. Notice the custom sample inputs with 'Preset Potable' and 'Preset Non-Potable' buttons, the predicted probability meter showing 78.4%, the clear POTABLE classification badge, the log-odds parameter contribution breakdown, and the batch predictions distribution histogram.",
+      "Statistical integrity is paramount in WaterStat. We utilize descriptive metrics (mean, median, variance, SD, IQR, skewness); hypothesis testing with Welch t-tests, one-way ANOVA, and Chi-square; multivariate modeling with MLR and PCA; and rigorous model evaluation including confusion matrices, ROC/AUC, and probability calibration.",
+      "These are the 8 expected outcomes of the WaterStat platform. In strict accordance with academic honesty guidelines, we do not present fabricated accuracy percentages or artificial p-values. The system computes all metrics dynamically from the uploaded data.",
+      "In conclusion, WaterStat integrates data preprocessing, statistical analysis, visualization, hypothesis testing, and modeling into a single interactive R Shiny platform. It ensures methodological rigor with three distinct preprocessing paths and prioritizes interpretability through odds ratios and confidence intervals.",
+      "For future scope, we plan to incorporate multi-basin datasets, tree-based ensemble models with SHAP values, automated PDF report generation via Quarto, and geospatial GIS contamination mapping. Thank you, and I now welcome your questions."
+    ];
+
+    function showSlide(n) {
+      document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+      const active = document.getElementById(`slide-${n}`);
+      if (active) active.classList.add('active');
+
+      document.getElementById('slideCounter').textContent = `Slide ${n} / ${totalSlides}`;
+      document.getElementById('prevBtn').disabled = (n === 1);
+      document.getElementById('nextBtn').disabled = (n === totalSlides);
+
+      document.getElementById('notesSlideNum').textContent = n;
+      document.getElementById('notesContent').textContent = speakerNotes[n - 1];
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        currentSlide++;
+        showSlide(currentSlide);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        currentSlide--;
+        showSlide(currentSlide);
+      }
+    }
+
+    function toggleNotes() {
+      const drawer = document.getElementById('notesDrawer');
+      drawer.style.display = (drawer.style.display === 'none') ? 'block' : 'none';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'Space') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    showSlide(1);
+  </script>
+</body>
+</html>

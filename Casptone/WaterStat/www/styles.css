@@ -1,0 +1,878 @@
+/* ==========================================================================
+   WaterStat - Enterprise Environmental Intelligence & Laboratory Design System
+   Modern Glassmorphism & High-Tech Lab Aesthetic (R Shiny v4.6)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+  /* High-Tech Ocean Navy & Lab Teal Palette */
+  --ws-brand-dark: #0a192f;       /* Deep Navy */
+  --ws-brand-navy: #0f2744;       /* Slate Navy */
+  --ws-primary: #0f766e;          /* Lab Teal */
+  --ws-primary-dark: #115e59;
+  --ws-primary-light: #ccfbf1;
+  --ws-primary-glow: rgba(15, 118, 110, 0.35);
+  
+  --ws-accent: #0284c7;           /* Marine Blue */
+  --ws-accent-cyan: #06b6d4;      /* Electric Cyan */
+  --ws-cyan-glow: rgba(6, 182, 212, 0.4);
+  
+  --ws-potable: #10b981;          /* Emerald Green */
+  --ws-potable-light: #ecfdf5;
+  --ws-potable-border: #6ee7b7;
+  
+  --ws-nonpotable: #ef4444;       /* Crimson Red */
+  --ws-nonpotable-light: #fef2f2;
+  --ws-nonpotable-border: #fca5a5;
+  
+  --ws-warning: #f59e0b;          /* Amber */
+  --ws-warning-light: #fffbeb;
+  
+  --ws-dark: #0f172a;             /* Slate 900 */
+  --ws-text: #334155;             /* Slate 700 */
+  --ws-text-muted: #64748b;       /* Slate 500 */
+  --ws-bg: #f8fafc;               /* Crisp Slate 50 */
+  --ws-card-bg: #ffffff;
+  --ws-border: #e2e8f0;           /* Slate 200 */
+  
+  --ws-radius-sm: 8px;
+  --ws-radius: 12px;
+  --ws-radius-lg: 18px;
+  
+  --ws-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --ws-shadow-sm: 0 2px 6px -1px rgba(0, 0, 0, 0.06), 0 1px 4px -1px rgba(0, 0, 0, 0.04);
+  --ws-shadow-md: 0 6px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+  --ws-shadow-lg: 0 16px 32px -4px rgba(15, 23, 42, 0.12), 0 6px 12px -6px rgba(15, 23, 42, 0.06);
+  --ws-shadow-glow: 0 0 20px rgba(14, 165, 233, 0.25);
+}
+
+html {
+  height: 100%;
+  overflow-y: auto !important;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--ws-text);
+  background: #f8fafc;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(15, 118, 110, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+}
+
+/* Headings with high-end geometric aesthetic */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', 'Outfit', sans-serif;
+  font-weight: 700;
+  color: var(--ws-dark);
+  letter-spacing: -0.025em;
+}
+
+.mono-num {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Navbar: High-Tech Enterprise Header */
+.navbar {
+  background: linear-gradient(135deg, #091e3a 0%, #0f3952 50%, #0a4d5c 100%) !important;
+  box-shadow: 0 4px 20px rgba(9, 30, 58, 0.25) !important;
+  padding: 0.75rem 1.75rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.navbar-brand {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-decoration: none !important;
+  padding: 0 !important;
+}
+
+.ws-brand-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #00adb5 0%, #0284c7 100%);
+  color: #ffffff;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  box-shadow: 0 0 15px rgba(0, 173, 181, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.navbar-brand:hover .ws-brand-icon {
+  transform: rotate(-10deg) scale(1.08);
+}
+
+.ws-brand-title {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 1.35rem !important;
+  color: #ffffff !important;
+  letter-spacing: -0.02em;
+}
+
+.ws-brand-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ccfbf1;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: 6px;
+}
+
+/* Navbar Nav Links */
+.navbar-nav .nav-link {
+  font-weight: 600 !important;
+  font-size: 0.90rem !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  padding: 0.55rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link.active {
+  color: #091e3a !important;
+  background: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Pulsing Status Dot in Header */
+.ws-engine-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.ws-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10b981;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: ws-pulse 1.8s infinite;
+}
+
+@keyframes ws-pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+/* High-Impact Hero Banner */
+.ws-hero {
+  background: linear-gradient(135deg, #091e3a 0%, #0f3454 45%, #0d5c63 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--ws-radius-lg);
+  padding: 2.25rem;
+  margin-bottom: 1.75rem;
+  color: #ffffff;
+  box-shadow: var(--ws-shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.ws-hero::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.ws-hero-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  color: #67e8f9;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.ws-hero h2 {
+  color: #ffffff !important;
+  font-size: 2.1rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
+}
+
+.ws-hero-subtitle {
+  color: #93c5fd;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.75rem;
+}
+
+.ws-hero-p {
+  color: #cbd5e1;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 900px;
+  margin-bottom: 1.25rem;
+}
+
+/* Glass Stat Chips in Hero */
+.ws-hero-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+.ws-hero-chip {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.ws-hero-chip:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.ws-hero-chip-icon {
+  font-size: 1.25rem;
+  color: #38bdf8;
+}
+
+.ws-hero-chip-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.1;
+}
+
+.ws-hero-chip-lbl {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* High-Tech Interactive Pipeline Flow */
+.ws-pipeline-card {
+  background: #ffffff;
+  border: 1px solid var(--ws-border);
+  border-radius: var(--ws-radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.75rem;
+  box-shadow: var(--ws-shadow-sm);
+}
+
+.ws-pipeline-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 4px;
+}
+
+.ws-pipeline-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 10px;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.ws-pipeline-node:hover {
+  background: #f0fdfa;
+  border-color: #0f766e;
+  color: #0f766e;
+  transform: translateY(-2px);
+  box-shadow: var(--ws-shadow-sm);
+}
+
+.ws-pipeline-num {
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #0f766e, #0284c7);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ws-pipeline-arrow {
+  color: #cbd5e1;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+/* Feature Module Cards */
+.feature-module-card {
+  border-radius: var(--ws-radius);
+  border: 1px solid var(--ws-border);
+  background: #ffffff;
+  padding: 1.4rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: var(--ws-shadow-sm);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--ws-shadow-lg);
+  border-color: #0f766e;
+}
+
+.feature-module-card .module-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.mod1-icon { background: #e0f2fe; color: #0284c7; }
+.mod2-icon { background: #ccfbf1; color: #0f766e; }
+.mod3-icon { background: #ede9fe; color: #7c3aed; }
+.mod4-icon { background: #fef3c7; color: #d97706; }
+
+.feature-module-card .badge-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.feature-module-card .tag-pill {
+  font-size: 0.70rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Module Header Banner */
+.module-header {
+  border-left-width: 5px !important;
+  background: #ffffff !important;
+  border-radius: var(--ws-radius) !important;
+  box-shadow: var(--ws-shadow-sm) !important;
+  padding: 1.15rem 1.4rem !important;
+  margin-bottom: 1.25rem !important;
+  transition: all 0.2s ease;
+}
+
+.module-header:hover {
+  box-shadow: var(--ws-shadow-md) !important;
+}
+
+/* Cards & Layout */
+.card:not(.bslib-value-box) {
+  border: 1px solid var(--ws-border) !important;
+  border-radius: var(--ws-radius) !important;
+  background-color: var(--ws-card-bg) !important;
+  box-shadow: var(--ws-shadow-sm) !important;
+  margin-bottom: 1.25rem;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card:not(.bslib-value-box):hover {
+  box-shadow: var(--ws-shadow-md) !important;
+  border-color: #cbd5e1 !important;
+}
+
+.card-header {
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid var(--ws-border) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.92rem !important;
+  color: var(--ws-dark) !important;
+  padding: 0.85rem 1.25rem !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Value Boxes: Modern Enterprise Stat Cards */
+.bslib-value-box {
+  border-radius: var(--ws-radius) !important;
+  box-shadow: var(--ws-shadow-sm) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  margin-bottom: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bslib-value-box:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ws-shadow-md) !important;
+}
+
+.bslib-value-box.bg-primary {
+  background: linear-gradient(135deg, #091e3a 0%, #0f766e 100%) !important;
+  color: #ffffff !important;
+}
+
+.bslib-value-box.bg-info {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+}
+
+.bslib-value-box.bg-success {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: #ffffff !important;
+}
+
+.bslib-value-box.bg-danger {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+  color: #ffffff !important;
+}
+
+.bslib-value-box.bg-warning {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+  color: #ffffff !important;
+}
+
+.bslib-value-box.bg-light {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid var(--ws-border) !important;
+}
+
+.bslib-value-box .value-box-value {
+  font-family: 'JetBrains Mono', 'Plus Jakarta Sans', monospace !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+}
+
+.bslib-value-box .value-box-title {
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.90;
+}
+
+/* ==========================================================================
+   LABORATORY CONSOLE & WATER SAFETY CERTIFICATE (Module 4)
+   ========================================================================== */
+
+.ws-lab-console {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--ws-radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--ws-shadow-md);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.ws-cert-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 2px dashed #e2e8f0;
+  margin-bottom: 1.25rem;
+}
+
+.ws-cert-id {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+/* Potability Probability Progress Meter */
+.ws-meter-wrapper {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border-radius: var(--ws-radius);
+  border: 1px solid #e2e8f0;
+}
+
+.ws-meter-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.ws-meter-bar-track {
+  height: 28px;
+  background: #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.ws-meter-bar-fill {
+  height: 100%;
+  border-radius: 14px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.fill-potable {
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.fill-nonpotable {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.ws-meter-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.70rem;
+  color: #94a3b8;
+  font-weight: 600;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
+/* Big Classification Badges */
+.ws-badge-potable {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ecfdf5;
+  border: 2px solid #10b981;
+  color: #065f46;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 8px 18px;
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.ws-badge-nonpotable {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fef2f2;
+  border: 2px solid #ef4444;
+  color: #991b1b;
+  font-weight: 800;
+  font-size: 1.1rem;
+  padding: 8px 18px;
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+/* WHO Compliance Status Badges */
+.who-pass {
+  background-color: #d1fae5;
+  color: #065f46;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #a7f3d0;
+}
+
+.who-fail {
+  background-color: #fee2e2;
+  color: #991b1b;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+}
+
+.who-warn {
+  background-color: #fef3c7;
+  color: #92400e;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #fde68a;
+}
+
+/* Form Controls & Inputs */
+.form-control, .form-select {
+  border-radius: var(--ws-radius-sm) !important;
+  border: 1px solid var(--ws-border) !important;
+  font-size: 0.90rem !important;
+  padding: 0.55rem 0.85rem !important;
+  transition: all 0.2s ease !important;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #0284c7 !important;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15) !important;
+}
+
+/* Modern Gradient Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%) !important;
+  border: none !important;
+  font-weight: 700 !important;
+  border-radius: var(--ws-radius-sm) !important;
+  padding: 0.55rem 1.1rem !important;
+  box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3) !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #115e59 0%, #0f766e 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.4) !important;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border: none !important;
+  font-weight: 700 !important;
+  border-radius: var(--ws-radius-sm) !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* DT DataTables Clean Styling */
+.dataTables_wrapper {
+  font-size: 0.86rem;
+}
+
+table.dataTable thead th {
+  background-color: #f8fafc !important;
+  border-bottom: 2px solid var(--ws-border) !important;
+  font-weight: 700 !important;
+  color: var(--ws-dark) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   WaterStat — Analytics Dashboard & Training UI Extensions
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Dashboard section dividers ──────────────────────────────────────────── */
+.ws-dash-section {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ── KPI value boxes in dashboard ────────────────────────────────────────── */
+.bslib-value-box .value-box-value {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-weight: 700;
+}
+
+/* ── Cleaned data tab pipeline steps ─────────────────────────────────────── */
+.ws-pipeline-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+.ws-pipeline-step .step-num {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #0f766e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ws-pipeline-step.done   { border-left: 4px solid #10b981; }
+.ws-pipeline-step.pending { border-left: 4px solid #f59e0b; }
+
+/* ── Training sidebar pre-flight checklist ────────────────────────────────── */
+.ws-checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  padding: 0.2rem 0;
+  color: #374151;
+}
+.ws-checklist-item.ok   { color: #059669; }
+.ws-checklist-item.pend { color: #9ca3af; }
+
+/* ── Training summary card ───────────────────────────────────────────────── */
+.ws-train-summary {
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ws-train-summary .ws-train-header {
+  background: linear-gradient(90deg, #059669, #0d9488);
+  color: #fff;
+  padding: 0.5rem 0.9rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ws-train-summary .ws-train-body {
+  padding: 0.5rem 0.75rem;
+  background: #f0fdf4;
+}
+.ws-train-summary .ws-train-body table {
+  width: 100%;
+  font-size: 0.78rem;
+}
+.ws-train-summary .ws-train-body td {
+  padding: 2px 4px;
+}
+.ws-train-summary .ws-train-body td:first-child {
+  color: #6b7280;
+}
+.ws-train-summary .ws-train-body td:last-child {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* ── Dashboard chart section heading ──────────────────────────────────────── */
+.border-bottom.pb-1.text-muted.fw-bold.mb-2 {
+  font-size: 0.72rem;
+  letter-spacing: 0.07em;
+}
+
+/* ── Smooth plotly container sizing ──────────────────────────────────────── */
+.plotly.html-widget {
+  width: 100% !important;
+}
+
+/* ── Imputation summary table header ─────────────────────────────────────── */
+.clean-impute-header {
+  background: #0f766e;
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px 6px 0 0;
+}
+
+/* ── Analytics Dashboard padding fix ─────────────────────────────────────── */
+.tab-pane .p-3 {
+  padding: 1rem !important;
+}

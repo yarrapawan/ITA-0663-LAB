@@ -1,0 +1,121 @@
+======================================================================
+WATERSTAT QA TEST SUITE
+Timestamp: 2026-11-25 07:27:32 
+======================================================================
+
+Warning message:
+package 'ggplot2' was built under R version 4.6.2 
+Custom assessment module loaded: modules/module4_assessment.R (module4AssessmentServer; modules/custom_assessment.R not present) 
+
+----------------------------------------------------------------------
+TEST 1 - Validation messages
+----------------------------------------------------------------------
+
+[Case: missing_column] (tests/data/missing_column.csv)
+  ok      : FALSE 
+  ok_model: FALSE 
+  errors  : Missing required column(s): Hardness 
+  warnings: 1434 missing predictor values. 
+  ok_model blocks modeling: TRUE | direct train_logistic(): ERROR: undefined columns selected 
+
+[Case: text_in_number] (tests/data/text_in_number.csv)
+  ok      : TRUE 
+  ok_model: TRUE 
+  errors  : (none) 
+  warnings: Non-numeric entries were found and converted to missing (see invalid-values table). | 1437 missing predictor values. 
+  ok_model blocks modeling: FALSE | direct train_logistic(): succeeded 
+
+[Case: empty] (tests/data/empty.csv)
+  read_water_data ERROR: The file is empty. 
+  ok_model blocks modeling: TRUE | direct train_logistic(): not called (NULL df)
+
+[Case: one_class] (tests/data/one_class.csv)
+  ok      : TRUE 
+  ok_model: FALSE 
+  errors  : (none) 
+  warnings: Potability needs at least 5 observations in each class for group analysis and modeling. | 1434 missing predictor values. 
+  ok_model blocks modeling: TRUE | direct train_logistic(): ERROR: Potability has only one class. 
+
+----------------------------------------------------------------------
+TEST 2 - Reproducibility with the same seed
+----------------------------------------------------------------------
+Run 1 (seed=42): AUC = 0.490088 | TP=0, TN=400, FP=0, FN=256
+Run 2 (seed=42): AUC = 0.490088 | TP=0, TN=400, FP=0, FN=256
+Run 3 (seed=7) : AUC = 0.511631 | TP=0, TN=400, FP=0, FN=256
+Run 4 (seed=42): AUC = 0.490088 | TP=0, TN=400, FP=0, FN=256
+
+identical() comparisons:
+  Run 1 vs Run 2 (seed 42 vs 42): AUC= TRUE | Coefs= TRUE | Counts= TRUE 
+  Run 1 vs Run 3 (seed 42 vs 7) : AUC differs= TRUE | Coefs differ= TRUE 
+  Run 1 vs Run 4 (seed 42 vs 42): AUC= TRUE | Coefs= TRUE | Counts= TRUE 
+
+----------------------------------------------------------------------
+TEST 3 - Threshold update (model seed = 42)
+----------------------------------------------------------------------
+ Threshold  TP  TN  FP  FN Pred_Potable Accuracy Sensitivity Specificity
+       0.1 256   0 400   0          656   0.3902      1.0000      0.0000
+       0.2 256   0 400   0          656   0.3902      1.0000      0.0000
+       0.3 256   0 400   0          656   0.3902      1.0000      0.0000
+       0.4  94 257 143 162          237   0.5351      0.3672      0.6425
+       0.5   0 400   0 256            0   0.6098      0.0000      1.0000
+       0.6   0 400   0 256            0   0.6098      0.0000      1.0000
+       0.7   0 400   0 256            0   0.6098      0.0000      1.0000
+       0.8   0 400   0 256            0   0.6098      0.0000      1.0000
+       0.9   0 400   0 256            0   0.6098      0.0000      1.0000
+
+Predicted potable (TP+FP) never increases as threshold rises: TRUE
+Values actually change across thresholds: TRUE (unique Pred_Potable counts: 656, 656, 656, 237, 0, 0, 0, 0, 0)
+
+----------------------------------------------------------------------
+TEST 4 - Invalid input handling
+----------------------------------------------------------------------
+Testing server: modules/module4_assessment.R (module4AssessmentServer; modules/custom_assessment.R not present) 
+
+Case a (no model):
+  Expected meaning: trained model required
+  Actual          : A trained Logistic Regression model is required before assessing custom water samples. Please train a model in Module 3 first.
+  Pass            : TRUE
+Warning messages:
+1: Removed 491 rows containing non-finite outside the scale range (`stat_bin()`). 
+2: Removed 781 rows containing non-finite outside the scale range (`stat_bin()`). 
+3: Removed 162 rows containing non-finite outside the scale range (`stat_bin()`). 
+4: Removed 491 rows containing non-finite outside the scale range
+(`stat_boxplot()`). 
+
+Case b (all empty):
+  Expected meaning: missing values
+  Actual          : Missing values in parameter(s): pH, Hardness, Solids, Chloramines, Sulfate, Conductivity, Organic_carbon, Trihalomethanes, Turbidity
+  Pass            : TRUE
+
+Case c (Turbidity = -1):
+  Expected meaning: negative values
+  Actual          : Negative values are physically impossible: Turbidity
+  Pass            : TRUE
+
+Case d (pH = 15):
+  Expected meaning: between 0 and 14
+  Actual          : pH value must be strictly between 0 and 14.
+  Pass            : TRUE
+
+Case e (Solids = 999999):
+  Expected: result + 'outside' warning for Solids, no crash
+  Actual  : prob=0.4732; class=Non-potable; outside=Solids
+  Pass    : TRUE
+
+Case f (no dataset loaded, state$raw = NULL):
+  need_valid(state) -> shiny.silent.error: No dataset loaded. Upload a CSV or Excel water-quality dataset to begin.
+The uploaded dataset failed validation. See the Validation report in Dataset Assessment.
+  Graceful Shiny validate() (no crash): TRUE
+
+----------------------------------------------------------------------
+SUMMARY TABLE (tests/results/table_4_4.md)
+----------------------------------------------------------------------
+| Specification | Required Value | Achieved Value | Status |
+|---|---|---|---|
+| Manual formula vs R function (F, χ², t, r, ρ) | Match to 4 decimals | Matched in all five test scripts | Pass |
+| Validation messages | Clear message for each invalid file; modeling blocked | missing_column flagged Hardness as missing; text_in_number gave a non-numeric warning; one_class disabled modeling; empty.csv: Pass (read_error='The file is empty.'; ok_model=FALSE) | Pass |
+| Reproducibility with the same seed | Identical results | Seed 42 repeated gave identical AUC (0.4901), coefficients and counts (TP 0, TN 400, FP 0, FN 256); seed 7 gave a different AUC (0.5116) | Pass |
+| Threshold update | All metrics change with the slider | Predicted-potable samples fell from 656 (thresholds 0.1–0.3) to 237 (0.4) to 0 (0.5–0.9); accuracy rose from 0.3902 to 0.6098 | Pass |
+| Invalid input handling | No crash; clear message | No trained model, empty inputs, negative value and pH above 14 each gave a clear message; Solids = 999,999 returned a prediction (prob=0.4732) with an unusual-value flag (outside=Solids); no dataset loaded gave a friendly message | Pass | 
+
+Saved: tests/results/test_results.csv, tests/results/table_4_4.md, tests/results/log.txt
